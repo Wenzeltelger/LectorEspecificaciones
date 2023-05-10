@@ -34,7 +34,6 @@ app.get('/', (req, res) => {
         console.log('No se encontró ningún SSD en el sistema.');
       }
 
-      // Agregar otras propiedades al objeto systemInfo
       systemInfo.hostname = hostname;
       systemInfo.arch = arch;
       systemInfo.osType = osType;
@@ -42,6 +41,9 @@ app.get('/', (req, res) => {
       systemInfo.freeMem = `${os.freemem() / 1024 / 1024} MB`;
       systemInfo.totalMem = `${os.totalmem() / 1024 / 1024} MB`;
       systemInfo.cpu = `${cpus[0].model} @ ${cpus[0].speed}MHz (${cpus[0].times.user} user, ${cpus[0].times.sys} sys)`;
+      
+      const currentTime = new Date().toLocaleString();
+      systemInfo.currentTime = currentTime;
 
       fs.readFile('index.html', 'utf8', (err, data) => {
         if (err) {
@@ -59,7 +61,8 @@ app.get('/', (req, res) => {
           .replace('{{cpu}}', systemInfo.cpu)
           .replace('{{ssdModel}}', systemInfo.ssdModel || 'No se encontró ningún SSD')
           .replace('{{ssdSize}}', systemInfo.ssdSize || 'N/A')
-          .replace('{{ssdInterface}}', systemInfo.ssdInterfaceType || 'N/A');
+          .replace('{{ssdInterface}}', systemInfo.ssdInterfaceType || 'N/A')
+          .replace('{{currentTime}}', currentTime);
 
         fs.writeFile('systemInfo.json', JSON.stringify(systemInfo), (err) => {
           if (err) {
